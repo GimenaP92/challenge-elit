@@ -1,0 +1,52 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+  IMAGE_NAME: $CI_REGISTRY_IMAGE
+
+build-release-dev:
+  stage: build
+  image: docker:26.1.4
+  services:
+    - name: docker:26.1.4-dind
+      command: ["--tls=false", "--mtu=1460"]
+  only:
+    - develop
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - export TAG_SHA="${CI_COMMIT_SHORT_SHA}"
+    - export IMG_SHA="${IMAGE_NAME}:${TAG_SHA}"
+    - export IMG_DEV="${IMAGE_NAME}:develop"
+    - docker build -t "${IMG_SHA}" .
+    - docker push "${IMG_SHA}"
+    - docker tag "${IMG_SHA}" "${IMG_DEV}"
+    - docker push "${IMG_DEV}"
+
+deploy-dev:
+  stage: deploy
+  only:
+    - develop
+  needs: ["build-release-dev"]
+  image: docker:26.1.4
+  when: manual
+  services:
+    - name: docker:26.1.4-dind
+      command: ["--tls=false", "--mtu=1460"]
+  before_script:
+    - 'command -v ssh-agent >/dev/null || (apk add --no-cache openssh)'
+    - eval $(ssh-agent -s)
+    - echo "$DEV_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan -p $DEV_SSH_PORT $DEV_SSH_IP_ADDRESS >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - ssh -p $DEV_SSH_PORT $DEV_SSH_USER@$DEV_SSH_IP_ADDRESS "
+        echo \$DEPLOY_REGISTRY_TOKEN | docker login -u '$CI_REGISTRY_USER' --password-stdin $CI_REGISTRY &&
+        cd $DEV_WORK_DIR &&
+        docker compose pull challenge &&
+        docker compose up -d
+      "
