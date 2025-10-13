@@ -8,6 +8,7 @@ import NewTaskCard from './NewTaskCard';
 import TaskCard from './TaskCard';
 import EditTaskCard from './EditTaskCard';
 import Image from 'next/image';
+import Spinner from '../ui/Spinner';
 
 const statuses: TaskStatus[] = ['Pendiente', 'En curso', 'Terminada'];
 
@@ -63,7 +64,13 @@ export default function Board() {
     setTimeout(() => setHighlightedStatus(null), 250); 
   };
 
-  if (loading) return <p className="text-sm text-white">Loading...</p>;
+if (loading)
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <Spinner />
+    </div>
+  );
+
 
   return (
     <div className="w-full mx-auto p-4 font-mono">
