@@ -58,7 +58,7 @@ El objetivo fue construir una solución completa que permitiera a los usuarios:
 ---
 
  🚀 Deploys
-- **Frontend en [Vercel](https://elit-front.vercel.app/)**  
+- **Frontend en [Vercel](https://challenge-elit.vercel.app/)**  
 - **Backend en [Render](https://challenge-elit.onrender.com/)**  
 - **Base de datos PostgreSQL** alojada también en **Render**
 
