@@ -74,7 +74,7 @@ docker-compose up --build
 
 Esto inicia los servicios y permite acceder a:
 - **Frontend:** http://localhost:3000  
-- **Backend:** http://localhost:4001  
+- **Backend:** http://localhost:3001  
 
 ---
 
@@ -133,10 +133,10 @@ npm run dev
 ---
 
 ## 🧠 Decisiones Técnicas
-
+- **NestJS**: elegido por su arquitectura modular, inyección de dependencias y soporte nativo para TypeScript.  Facilita la creación de APIs escalables y mantenibles siguiendo buenas prácticas de desarrollo backend. Integración nativa con Swagger permite documentar los endpoints de forma clara y automatizada.
+- **Next.js**: ofrece SSR y excelente experiencia de desarrollo.  
 - **TypeScript**: asegura tipado fuerte y reduce errores en desarrollo.  
 - **TypeORM + PostgreSQL**: facilita migraciones y persistencia real.  
-- **Next.js**: ofrece SSR y excelente experiencia de desarrollo.  
 - **Tailwind CSS**: acelera el diseño y garantiza responsividad.  
 - **Context API**: ideal para manejar sesión sin librerías externas.  
 - **Docker**: permite levantar todo el entorno fácilmente.  

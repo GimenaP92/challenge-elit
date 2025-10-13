@@ -1,22 +1,24 @@
 services:
+  db:
+    image: postgres:15
+    container_name: elit_db
+    environment:
+      POSTGRES_DB: elit
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Programacion123!!
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
   challenge:
     image: ghcr.io/<org-o-user>/<repo-challenge>:develop
     container_name: challenge
-    hostname: challenge
-    restart: unless-stopped
     ports:
-      - "4001:4001"
-    pull_policy: always
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-    logging:
-      driver: json-file
-      options:
-        max-size: "50m"
-        max-file: "3"
+      - "3001:3001"
     environment:
       - DB_TYPE=postgres
-      - DB_HOST=localhost
+      - DB_HOST=db
       - DB_PORT=5432
       - DB_NAME=elit
       - DB_USERNAME=postgres
@@ -24,3 +26,6 @@ services:
       - FRONTEND_ORIGIN=http://localhost:3000
       - JWT_SECRET=mi_clave_super_secreta
       - JWT_EXPIRES_IN=3600
+
+volumes:
+  pgdata:

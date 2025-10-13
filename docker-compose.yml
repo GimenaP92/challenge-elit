@@ -1,0 +1,51 @@
+version: '3.9'
+services:
+  frontend:
+    build: ./front
+    container_name: elit_front
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+    volumes:
+      - ./front:/app  
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  backend:
+    build: ./back
+    container_name: elit_back
+    ports:
+      - "3001:3001"
+    environment:
+      - DB_TYPE=postgres
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=elit
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=Programacion123!!
+      - FRONTEND_ORIGIN=http://localhost:3000
+      - JWT_SECRET=mi_clave_super_secreta
+      - JWT_EXPIRES_IN=3600
+    volumes:
+      - ./back:/app 
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    container_name: elit_db
+    environment:
+      - POSTGRES_DB=elit
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Programacion123!!
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
